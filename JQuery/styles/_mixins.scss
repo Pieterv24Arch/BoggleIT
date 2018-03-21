@@ -1,0 +1,6 @@
+@mixin user-select($modifier) {
+  -webkit-user-select: $modifier;
+  -moz-user-select: $modifier;
+  -ms-user-select: $modifier;
+  user-select: $modifier;
+}
