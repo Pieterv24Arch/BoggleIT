@@ -9,46 +9,49 @@ using Newtonsoft.Json;
 
 namespace Backend.Models
 {
+    /// <summary>
+    /// This model defines the way the board state is stored in the database, and how it sould be serialized for external use.
+    /// </summary>
     public class BoardState
     {
+        [NotMapped]
         private char[] _board;
-        private List<string> _words = new List<string>();
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid StateId { get; set; }
 
-        public int Score { get; set; }
+        [JsonIgnore]
+        public List<WordEntry> Words { get; set; }
 
+        /*
+         * Used for external communication, can be converted into json
+         */
         [NotMapped]
         public char[] Board
         {
             get => _board;
-            set => _board = value;
-        }
-
-        [NotMapped]
-        public List<string> Words
-        {
-            get => _words;
-            set => _words = value;
-        }
-
-        [JsonIgnore]
-        public string BoardAsString
-        {
-            get
+            set
             {
-                if (_board != null && _board.Length > 0)
+                if (value.Length == 16)
                 {
-                    return string.Join("", _board);
+                    _board = value;
                 }
                 else
                 {
-                    return "";
+
+                    throw new ArgumentException("Board must be and array of 16 characters");
                 }
             }
+        }
 
+        /*
+         * Used for internal database storage so no new table has to be made.
+         */
+        [JsonIgnore]
+        public string BoardAsString
+        {
+            get => String.Join("", _board);
             set
             {
                 if (value.Length == 16)
@@ -57,33 +60,11 @@ namespace Backend.Models
                 }
                 else
                 {
-                    throw new ArgumentException("The string must be 16 characters long");
+                    throw new ArgumentException("The string has to be exactly 16 caracters");
                 }
             }
         }
 
-        [JsonIgnore]
-        public string WordsAsString
-        {
-            get
-            {
-                if (_words != null && _words.Count > 0)
-                {
-                    return string.Join(',', _words);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            set
-            {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    _words = value.Split(',').ToList();
-                }
-            }
-        }
+        public int Score { get; set; }
     }
 }

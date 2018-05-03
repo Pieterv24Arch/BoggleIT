@@ -25,15 +25,9 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            DbContextOptionsBuilder<BoggleDbContext> optionsBuilder = new DbContextOptionsBuilder<BoggleDbContext>();
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            BoggleDbContext context = new BoggleDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
-
-            services.AddDbContext<BoggleDbContext>((options) =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
+            // Add dbcontext as a service
+            services.AddDbContext<BoggleDbContext>(options =>
+                options.UseMySql(Configuration.GetConnectionString("MySqlConnection")));
 
             services.AddMvc();
         }
