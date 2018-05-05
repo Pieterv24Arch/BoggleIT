@@ -29,6 +29,12 @@ namespace Backend
             services.AddDbContext<BoggleDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MySqlConnection")));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+            });
+
             services.AddMvc();
         }
 
@@ -39,6 +45,9 @@ namespace Backend
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Allow all cors requests
+            app.UseCors("AllowAll");
 
             app.UseMvc();
         }

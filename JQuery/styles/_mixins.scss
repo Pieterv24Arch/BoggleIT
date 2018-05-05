@@ -4,3 +4,9 @@
   -ms-user-select: $modifier;
   user-select: $modifier;
 }
+
+@mixin boxShadow($modifier) {
+  -webkit-box-shadow: $modifier;
+  -moz-box-shadown: $modifier;
+  box-shadow: $modifier;
+}

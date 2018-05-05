@@ -5,15 +5,70 @@
   font-family: 'Ubuntu', sans-serif;
 }
 
+.general-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .boggle-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+.word-list-container {
+    display: flex;
+    margin-left: 10px;
+    background-color: #F0F0F0;
+    min-width: 200px;
+    overflow: scroll;
+    flex-direction: column;
+    padding: 10px;
+
+  p {
+    font-family: 'Ubuntu', sans-serif;
+  }
+  .word-list {
+
+    p {
+      margin: 0;
+      font-family: 'Ubuntu', sans-serif;
+    }
+  }
+}
 
 .boggle-row {
   display: flex;
   flex-direction: row;
+}
+
+.play-word {
+  display: flex;
+  padding: 5px 20px;
+  margin: 5px;
+  background-color: cyan;
+  @include boxShadow(3px 3px 3px 0px rgba(0,0,0,0.75));
+  border: none;
+  @extend %boggle-text-format;
+
+  &:active {
+    @include boxShadow(2px 2px 2px 0px rgba(0,0,0,0.75));
+  }
+}
+
+.new-game-word {
+  display: flex;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: blue;
+  @include boxShadow(3px 3px 3px 0px rgba(0,0,0,0.75));
+  border: none;
+  font-family: 'Ubuntu', sans-serif;
+  color: white;
+
+  &:active {
+    @include boxShadow(2px 2px 2px 0px rgba(0,0,0,0.75));
+  }
 }
 
 .boggle-box {
@@ -53,6 +108,7 @@
   justify-content: center;
   border: solid black 4px;
   padding: 0 20px;
+  margin: 5px;
   min-width: 5em;
   min-height: 5em;
 
@@ -60,5 +116,18 @@
     flex: none;
     margin: 0;
     @extend %boggle-text-format; 
+  }
+}
+
+.score-box {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  margin: 5px;
+
+  p {
+    flex: none;
+    margin: 0;
+    @extend %boggle-text-format;
   }
 }

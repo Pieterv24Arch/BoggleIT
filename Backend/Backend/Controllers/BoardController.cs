@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Backend.Database;
 using Backend.Models;
 using Backend.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Controllers
 {
+    [EnableCors("AllowAll")]
     [Produces("application/json")]
     [Route("api/Board")]
     public class BoardController : Controller
@@ -41,15 +43,37 @@ namespace Backend.Controllers
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IActionResult> GetBoardById(Guid id)
+        public async Task<IActionResult> GetBoardById(Guid id, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (id != Guid.Empty)
             {
-                BoardState bs = await context.BoardStates.FindAsync(id);
+                BoardState bs = await context.BoardStates.FindAsync(new object[] {id}, cancellationToken);
 
                 if (bs != null)
                 {
                     return Ok(bs);
+                }
+
+                return NotFound("The board with the requested id was not found");
+               
+            }
+
+            return BadRequest("The given id is not in a valid format");
+        }
+
+        [Route("{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteBoardById(Guid id, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (id != Guid.Empty)
+            {
+                BoardState toRemove = await context.BoardStates.FindAsync(new object[] {id}, cancellationToken);
+
+                if (toRemove != null)
+                {
+                    EntityEntry<BoardState> removed = context.BoardStates.Remove(toRemove);
+                    await context.SaveChangesAsync(cancellationToken);
+                    return Ok(removed);
                 }
 
                 return NotFound("The board with the requested id was not found");
@@ -58,18 +82,17 @@ namespace Backend.Controllers
             return BadRequest("The given id is not in a valid format");
         }
 
-        [Route("{id}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteBoardById(Guid id)
+        [Route("{id}/score")]
+        [HttpGet]
+        public async Task<IActionResult> GetScore(Guid id, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (id != Guid.Empty)
             {
-                BoardState toRemove = await context.BoardStates.FindAsync(id);
+                BoardState board = await context.BoardStates.FindAsync(new object[] {id}, cancellationToken);
 
-                if (toRemove != null)
+                if (board != null)
                 {
-                    EntityEntry<BoardState> removed = context.BoardStates.Remove(toRemove);
-                    return Ok(removed);
+                    return Ok(board.Score);
                 }
 
                 return NotFound("The board with the requested id was not found");

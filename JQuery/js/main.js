@@ -1,41 +1,109 @@
 import $ from 'jquery'
+import validator from 'validator'
 import '../styles/style.scss'
 
-let dice = [
-  ['R', 'I', 'F', 'O', 'B', 'X'],
-  ['I', 'F', 'E', 'H', 'E', 'Y'],
-  ['D', 'E', 'N', 'O', 'W', 'S'],
-  ['U', 'T', 'O', 'K', 'N', 'D'],
-  ['H', 'M', 'S', 'R', 'A', 'O'],
-  ['L', 'U', 'P', 'E', 'T', 'S'],
-  ['A', 'C', 'I', 'T', 'O', 'A'],
-  ['Y', 'L', 'G', 'K', 'U', 'E'],
-  ['Q', 'B', 'M', 'J', 'O', 'A'],
-  ['E', 'H', 'I', 'S', 'P', 'N'],
-  ['V', 'E', 'T', 'I', 'G', 'N'],
-  ['B', 'A', 'L', 'I', 'Y', 'T'],
-  ['E', 'Z', 'A', 'V', 'N', 'D'],
-  ['R', 'A', 'L', 'E', 'S', 'C'],
-  ['U', 'W', 'I', 'L', 'R', 'G'],
-  ['P', 'A', 'C', 'E', 'M', 'D']
-]
+let apiAddress = 'http://localhost:52964'
 
+// let dice = [
+//   ['R', 'I', 'F', 'O', 'B', 'X'],
+//   ['I', 'F', 'E', 'H', 'E', 'Y'],
+//   ['D', 'E', 'N', 'O', 'W', 'S'],
+//   ['U', 'T', 'O', 'K', 'N', 'D'],
+//   ['H', 'M', 'S', 'R', 'A', 'O'],
+//   ['L', 'U', 'P', 'E', 'T', 'S'],
+//   ['A', 'C', 'I', 'T', 'O', 'A'],
+//   ['Y', 'L', 'G', 'K', 'U', 'E'],
+//   ['Q', 'B', 'M', 'J', 'O', 'A'],
+//   ['E', 'H', 'I', 'S', 'P', 'N'],
+//   ['V', 'E', 'T', 'I', 'G', 'N'],
+//   ['B', 'A', 'L', 'I', 'Y', 'T'],
+//   ['E', 'Z', 'A', 'V', 'N', 'D'],
+//   ['R', 'A', 'L', 'E', 'S', 'C'],
+//   ['U', 'W', 'I', 'L', 'R', 'G'],
+//   ['P', 'A', 'C', 'E', 'M', 'D']
+// ]
+
+let boardId = ''
 let board = [
   undefined, undefined, undefined, undefined,
   undefined, undefined, undefined, undefined,
   undefined, undefined, undefined, undefined,
   undefined, undefined, undefined, undefined
 ]
+let score = 0
 
 let selected = []
 
 let lastSquare = -1
 
-const makeBoard = () => {
-  for (let i = 0; i < dice.length; i++) {
-    let random = Math.floor((Math.random() * 6))
-    board[i] = dice[i][random]
+const makeBoard = (id) => {
+  // for (let i = 0; i < dice.length; i++) {
+  //   let random = Math.floor((Math.random() * 6))
+  //   board[i] = dice[i][random]
+  // }
+  if (id && validateGuid(id)) {
+    $.ajax(apiAddress + '/api/board/' + id, {
+      method: 'GET'
+    }).then(p => {
+      boardId = p.stateId
+      board = p.board
+      score = p.score
+      drawBoardLetters()
+      updateScore()
+      updateWords()
+    }).catch(error => {
+      console.log(error)
+      if (error.status === 404) {
+        window.location.search = ''
+      }
+    })
+  } else {
+    $.ajax(apiAddress + '/api/board', {
+      method: 'GET'
+    }).then(p => {
+      boardId = p.stateId
+      board = p.board
+      score = p.score
+      updateUrlId(p.stateId)
+      // drawBoardLetters()
+    }).catch(error => {
+      console.log(error.statusText)
+    })
   }
+}
+
+const updateUrlId = (id) => {
+  let url = new URL(window.location)
+
+  if (getQueryStringParams('id')) {
+    url.searchParams.set('id', id)
+  } else {
+    url.searchParams.append('id', id)
+  }
+
+  window.location.search = url.search
+}
+
+const updateBoard = () => {
+  $.ajax(apiAddress + '/api/board/' + boardId, {
+    method: 'GET'
+  }).then(p => {
+    boardId = p.stateId
+    board = p.board
+    score = p.score
+    drawBoardLetters()
+    updateScore()
+    updateWords()
+  }).catch(error => {
+    console.log(error)
+    if (error.status === 404) {
+      window.location.search = ''
+    }
+  })
+}
+
+const newGame = () => {
+  window.location.search = ''
 }
 
 const drawBoardLetters = () => {
@@ -129,6 +197,37 @@ const drawWord = () => {
   $('.boggle-word p').text(word)
 }
 
+const updateScore = () => {
+  $('#score p').text('Score: ' + score)
+}
+
+const updateWords = () => {
+  $.ajax(apiAddress + '/api/word/' + boardId, {
+    method: 'GET'
+  }).then(p => {
+    if (p instanceof Array) {
+      let wordList = $('.word-list')
+      wordList.empty()
+      console.log(wordList)
+      p.forEach(element => {
+        console.log(element)
+        wordList.append('<p>' + element.word.toLowerCase() + '</p>')
+      })
+    }
+  }).catch(error => {
+    console.log(error)
+  })
+}
+
+const getWord = () => {
+  let word = ''
+  for (let letter in selected) {
+    word += board[selected[letter]]
+  }
+
+  return word
+}
+
 const markValidSquares = (id) => {
   let valid = getValidSquares(id)
 
@@ -136,6 +235,29 @@ const markValidSquares = (id) => {
     if (!$('#' + valid[val]).hasClass('pressed')) {
       $('#' + valid[val]).addClass('valid')
     }
+  }
+}
+
+const playWord = () => {
+  if (boardId) {
+    $.ajax(apiAddress + '/api/word/' + boardId, {
+      method: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        word: getWord(),
+        letterOrder: selected
+      })
+    }).then(a => {
+      console.log(a)
+      selected = []
+      lastSquare = -1
+      drawTiles()
+      drawWord()
+      updateBoard()
+    }).catch(e => {
+      console.log(e)
+    })
   }
 }
 
@@ -165,10 +287,34 @@ const registerClickEvents = () => {
       }
     })
   }
+
+  $('#play-button').click(() => {
+    console.log(selected)
+    playWord()
+  })
+
+  $('#new-game-button').click(() => {
+    newGame()
+  })
+}
+
+const getQueryStringParams = (param) => {
+  let queryUrl = window.location.search.substring(1)
+  let urlVars = queryUrl.split('&')
+  for (let i = 0; i < urlVars.length; i++) {
+    var urlParam = urlVars[i].split('=')
+    if (urlParam[0] === param) {
+      return urlParam[1]
+    }
+  }
+}
+
+const validateGuid = (guid) => {
+  return validator.isUUID(guid)
 }
 
 $(document).ready(() => {
-  makeBoard()
-  drawBoardLetters()
+  console.log(getQueryStringParams('id'))
+  makeBoard(getQueryStringParams('id'))
   registerClickEvents()
 })

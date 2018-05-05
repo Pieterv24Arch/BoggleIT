@@ -106,7 +106,7 @@ namespace Backend.Controllers
                 bool valid = true;
                 for (int i = 0; i < word.Word.Length; i++)
                 {
-                    if (word.Word[i] != Char.ToLower(board.Board[word.LetterOrder[i]]))
+                    if (Char.ToLower(word.Word[i]) != Char.ToLower(board.Board[word.LetterOrder[i]]))
                     {
                         valid = false;
                         break;
@@ -122,7 +122,7 @@ namespace Backend.Controllers
                 if (valid)
                 {
                     // Check if word is dutch dictionary
-                    string dictionaryWord = WordFileReader.Instance.Words.Find(s => s == word.Word);
+                    string dictionaryWord = WordFileReader.Instance.Words.Find(s => s == word.Word.ToLower());
                     if (dictionaryWord != null && dictionaryWord == word.Word.ToLower())
                     {
                         return true;
