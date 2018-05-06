@@ -1,0 +1,28 @@
+.container {
+  width: 400px;
+  height: 400px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  line-height: 30px;
+
+  padding: 5px;
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    .item {
+      background-color: black;
+      flex: 1 0 auto;
+      margin: 5px;
+      height: auto;
+    }
+
+    .item:before {
+      content: '';
+      float: left;
+      padding-top: 100%;
+    }
+  }
+}
