@@ -1,6 +1,5 @@
 .container {
-  width: 400px;
-  height: 400px;
+  width: 800px;
 
   display: flex;
   flex-direction: column;
@@ -12,11 +11,18 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+
     .item {
-      background-color: black;
-      flex: 1 0 auto;
+      flex: 1;
       margin: 5px;
       height: auto;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      overflow: hidden;
+      min-width: 0;
     }
 
     .item:before {

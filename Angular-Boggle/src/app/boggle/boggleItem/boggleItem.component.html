@@ -1,0 +1,8 @@
+<button
+  class="boggle-item"
+  mat-raised-button
+  [ngClass]="{valid: valid, selected: selected, invalid: invalid}"
+  (click)="handleClick()"
+>
+  {{Letter | uppercase}}
+</button>

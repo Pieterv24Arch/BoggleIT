@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.boggle-item {
+  flex: 1;
+  margin: 5px;
+  height: auto;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  overflow: hidden;
+  min-width: 0;
+
+  &.valid {
+    background-color: green;
+    color: #FFFFFF;
+  }
+
+  &.invalid {
+    background-color: red;
+    color: #FFFFFF;
+  }
+
+  &.selected {
+    background-color: blue;
+    color: #FFFFFF;
+  }
+
+  &::before {
+    content: '';
+    float: left;
+    padding-top: 100%;
+  }
+}

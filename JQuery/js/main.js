@@ -2,7 +2,7 @@ import $ from 'jquery'
 import validator from 'validator'
 import '../styles/style.scss'
 
-let apiAddress = 'http://localhost:52964'
+let apiAddress = 'http://localhost:50445'
 
 // let dice = [
 //   ['R', 'I', 'F', 'O', 'B', 'X'],
