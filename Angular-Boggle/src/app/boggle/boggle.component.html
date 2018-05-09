@@ -1,33 +1,77 @@
-<mat-toolbar color='primary'>
-  <span>{{title}}</span>
-</mat-toolbar>
-<div class="container">
-  <h1>Hello, World!!!</h1>
-  <button mat-raised-button color='primary'>Test</button>
-</div>
-<div class="boggle-container">
-  <div class="boggle-row">
-    <app-boggle-item Letter='a'></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-  </div>
-  <div class="boggle-row">
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-  </div>
-  <div class="boggle-row">
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-  </div>
-  <div class="boggle-row">
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-    <app-boggle-item></app-boggle-item>
-  </div>
-</div>
+<mat-drawer-container hasBackdrop='false' class="drawer-content">
+  <mat-drawer #wordDrawer class='wordDrawer' mode='over' position='end'>
+    <mat-toolbar color='primary'>
+      <button mat-icon-button (click)='wordDrawer.toggle()'>
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar>
+  </mat-drawer>
+  <mat-drawer #menuDrawer class='menuDrawer' mode='over' position='start'>
+    <mat-toolbar color='primary'>
+      <span class="toolbar-spacer"></span>
+      <button mat-icon-button (click)='menuDrawer.toggle()'>
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar>
+    <mat-nav-list>
+      <mat-list-item>
+        <span class="listItem" (click)='newGame(menuDrawer)'>New Game</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <mat-toolbar color='primary'>
+      <button mat-icon-button (click)='menuDrawer.toggle()'>
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>{{title}}</span>
+      <span class='toolbar-spacer'></span>
+      <button mat-button (click)='wordDrawer.toggle()'>Woorden</button>
+    </mat-toolbar>
+    <div class="container">
+      <div class="boggle-board-container">
+        <div class="boggle-container">
+          <mat-card class="timer-card">
+              <mat-card-title class="timer-text">
+                <app-timer
+                  [startTime]='playBoard.timeCreated'
+                  [countDownFrom]='60000'
+                  (timerDone)='timerExpired()'>
+                </app-timer>
+              </mat-card-title>
+          </mat-card>
+          <div class="boggle-row">
+            <app-boggle-item ItemId='0' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='1' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='2' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='3' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+          </div>
+          <div class="boggle-row">
+            <app-boggle-item ItemId='4' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='5' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='6' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='7' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+          </div>
+          <div class="boggle-row">
+            <app-boggle-item ItemId='8' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='9' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='10' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='11' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+          </div>
+          <div class="boggle-row">
+            <app-boggle-item ItemId='12' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='13' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='14' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+            <app-boggle-item ItemId='15' [Board]='board' (selected)='handleItemClick($event)'></app-boggle-item>
+          </div>
+          <mat-card class="word-card">
+              <mat-card-title class="word-text">&nbsp;{{word | uppercase}}&nbsp;</mat-card-title>
+          </mat-card>
+          <div class="button-container">
+              <button mat-raised-button color='primary' (click)='handlePlayClick()'>Speel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

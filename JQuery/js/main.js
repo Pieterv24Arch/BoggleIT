@@ -1,8 +1,11 @@
 import $ from 'jquery'
 import validator from 'validator'
+import sprintf from 'sprintf'
 import '../styles/style.scss'
 
-let apiAddress = 'http://localhost:50445'
+let apiAddress = 'http://localhost:52964'
+let timeLimitMs = 60000
+let timerInterval
 
 // let dice = [
 //   ['R', 'I', 'F', 'O', 'B', 'X'],
@@ -31,6 +34,9 @@ let board = [
   undefined, undefined, undefined, undefined
 ]
 let score = 0
+/* eslint-disable */
+let TimeCreated = 0
+/* eslint-enable */
 
 let selected = []
 
@@ -48,7 +54,9 @@ const makeBoard = (id) => {
       boardId = p.stateId
       board = p.board
       score = p.score
+      TimeCreated = p.timeCreated
       drawBoardLetters()
+      startTimer()
       updateScore()
       updateWords()
     }).catch(error => {
@@ -82,6 +90,38 @@ const updateUrlId = (id) => {
   }
 
   window.location.search = url.search
+}
+
+const startTimer = () => {
+  let timeLeft = timeLimitMs - (Date.now() - TimeCreated)
+  if (timeLeft > 0) {
+    updateTime()
+    timerInterval = window.setInterval(() => {
+      updateTime()
+    }, 10)
+  }
+}
+
+const updateTime = () => {
+  let timeLeft = timeLimitMs - (Date.now() - TimeCreated)
+  if (timeLeft > 0) {
+    let minutes = Math.floor(timeLeft / 60000)
+    timeLeft = timeLeft % 60000
+    let seconds = Math.floor(timeLeft / 1000)
+    timeLeft = timeLeft % 1000
+    let hundreds = Math.floor(timeLeft / 10)
+    $('#time p').text(sprintf('%2s:%2s:%2s', minutes, seconds, hundreds))
+  } else {
+    $('#time p').text('00:00:00')
+    window.clearInterval(timerInterval)
+    updateScore()
+    selected = []
+    lastSquare = -1
+    drawTiles()
+    drawWord()
+    updateBoard()
+    window.alert('Your score is: ' + score)
+  }
 }
 
 const updateBoard = () => {
@@ -130,24 +170,31 @@ const getValidSquares = (id) => {
     if (isValidCoord([coord[0] + 1, coord[1]])) {
       validIds.push(coordsToId([coord[0] + 1, coord[1]]))
     }
+
     if (isValidCoord([coord[0] + 1, coord[1] - 1])) {
       validIds.push(coordsToId([coord[0] + 1, coord[1] - 1]))
     }
+
     if (isValidCoord([coord[0], coord[1] - 1])) {
       validIds.push(coordsToId([coord[0], coord[1] - 1]))
     }
+
     if (isValidCoord([coord[0] - 1, coord[1] - 1])) {
       validIds.push(coordsToId([coord[0] - 1, coord[1] - 1]))
     }
+
     if (isValidCoord([coord[0] - 1, coord[1]])) {
       validIds.push(coordsToId([coord[0] - 1, coord[1]]))
     }
+
     if (isValidCoord([coord[0] - 1, coord[1] + 1])) {
       validIds.push(coordsToId([coord[0] - 1, coord[1] + 1]))
     }
+
     if (isValidCoord([coord[0], coord[1] + 1])) {
       validIds.push(coordsToId([coord[0], coord[1] + 1]))
     }
+
     if (isValidCoord([coord[0] + 1, coord[1] + 1])) {
       validIds.push(coordsToId([coord[0] + 1, coord[1] + 1]))
     }
@@ -208,9 +255,7 @@ const updateWords = () => {
     if (p instanceof Array) {
       let wordList = $('.word-list')
       wordList.empty()
-      console.log(wordList)
       p.forEach(element => {
-        console.log(element)
         wordList.append('<p>' + element.word.toLowerCase() + '</p>')
       })
     }
@@ -249,7 +294,6 @@ const playWord = () => {
         letterOrder: selected
       })
     }).then(a => {
-      console.log(a)
       selected = []
       lastSquare = -1
       drawTiles()
@@ -289,7 +333,6 @@ const registerClickEvents = () => {
   }
 
   $('#play-button').click(() => {
-    console.log(selected)
     playWord()
   })
 
@@ -314,7 +357,6 @@ const validateGuid = (guid) => {
 }
 
 $(document).ready(() => {
-  console.log(getQueryStringParams('id'))
   makeBoard(getQueryStringParams('id'))
   registerClickEvents()
 })

@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  public run: boolean = false;
+
+  public toggleRun(): void {
+    this.run = !this.run;
+  }
 }

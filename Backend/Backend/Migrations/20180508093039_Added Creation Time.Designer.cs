@@ -11,9 +11,10 @@ using System;
 namespace Backend.Migrations
 {
     [DbContext(typeof(BoggleDbContext))]
-    partial class BoggleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180508093039_Added Creation Time")]
+    partial class AddedCreationTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +30,7 @@ namespace Backend.Migrations
 
                     b.Property<int>("Score");
 
-                    b.Property<double>("TimeCreated");
+                    b.Property<DateTime>("TimeCreated");
 
                     b.HasKey("StateId");
 

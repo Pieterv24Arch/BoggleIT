@@ -1,15 +1,66 @@
-.boggle-container {
-  // width: 800px;
+.wordDrawer {
+  max-width: 50%;
+  min-width: 200px;
+}
 
+.menuDrawer {
+  min-width: 200px;
+  max-width: 50%;
+
+  .listItem {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.drawer-content {
+  height: 100%;
+}
+.boggle-board-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  line-height: 30px;
+  justify-content: center;
 
-  padding: 5px;
-  .boggle-row {
+  .boggle-container {
+    max-width: 400px;
+    width: 90%;
+
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-around;
+    line-height: 30px;
+
+    padding: 5px;
+    .boggle-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .word-card {
+      margin: 1em;
+      overflow: hidden;
+      .word-text {
+        text-align: center;
+      }
+    }
+
+    .timer-card {
+      margin: 1em 0;
+      .timer-text {
+        text-align: center;
+      }
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1em;
+    }
   }
 }

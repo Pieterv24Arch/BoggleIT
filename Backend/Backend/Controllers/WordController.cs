@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Backend.Database;
@@ -17,6 +18,7 @@ namespace Backend.Controllers
     public class WordController : Controller
     {
         private readonly BoggleDbContext context;
+        private double maxTimeInMs = 60000;
 
         public WordController(BoggleDbContext context)
         {
@@ -52,7 +54,7 @@ namespace Backend.Controllers
             if (id != Guid.Empty && ModelState.IsValid)
             {
                 BoardState board = await context.BoardStates.FindAsync(new object[] {id}, cancellationToken);
-                if (board != null)
+                if (board != null && DateTime.UtcNow.Subtract(new DateTime(1970,1,1,0,0,0,DateTimeKind.Utc)).TotalMilliseconds - board.TimeCreated < maxTimeInMs)
                 {
                     if (WordIsValid(addWord, board) && !(await WordAlreadyOnBoard(addWord, board, cancellationToken)) && OrderIsValid(addWord))
                     {
@@ -81,10 +83,14 @@ namespace Backend.Controllers
                     }
                     else
                     {
-                        return BadRequest("The given word and the order must be the same lenght");
+                        return BadRequest("the given word is invalid");
                     }
                 }
 
+                if (board != null)
+                {
+                    return StatusCode(410, "Out of time for this board");
+                }
                 return NotFound("The requested board could not be found");
             }
 

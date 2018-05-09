@@ -20,6 +20,7 @@ namespace Backend.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid StateId { get; set; }
+        public double TimeCreated { get; set; }
 
         [JsonIgnore]
         public List<WordEntry> Words { get; set; }
