@@ -2,13 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { UpperCasePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDrawer } from '@angular/material';
+import { MatDrawer, MatDialog } from '@angular/material';
 
 import { displayState, BoardState } from '../models/Boardstate';
 import { BoardHelper } from '../helpers/BoardHelper';
 
 import { BoggleService } from '../services/boggle.service';
 import { Board } from '../models/Board';
+import { WordEntry } from '../models/WordEntry';
+import { DialogModel } from '../models/DialogModel';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SimpleDialogComponent } from '../dialog/simpleDialog/simpleDialog.component';
+import { EndGameDialogComponent } from '../dialog';
+import { EndgameDialogModel } from '../models/EndgameDialogModel';
 
 @Component({
   selector: 'app-boggle',
@@ -23,12 +29,14 @@ export class BoggleComponent implements OnInit {
 
   private selectedOrder: Array<number> = [];
   private lastItemId: number = -1;
+  public words: Array<WordEntry> = [];
 
   public constructor(
     TitleService: Title,
     private boggleService: BoggleService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {
     TitleService.setTitle(this.title);
   }
@@ -50,11 +58,52 @@ export class BoggleComponent implements OnInit {
   }
 
   public handlePlayClick(): void {
+    console.log(this.playBoard.timeCreated);
+    console.log(Date.now());
+    if (this.selectedOrder.length > 0) {
+      let wordString = '';
+      this.selectedOrder.forEach((element: number) => {
+        wordString += this.board.letters[element];
+      });
+      const word = new WordEntry(wordString, this.selectedOrder);
+      this.boggleService.postWord(this.playBoard.stateId, word).subscribe((e: any) => {
+        console.log(e);
+        this.updateWordList();
+      }, (error: HttpErrorResponse) => {
+        this.dialog.open(SimpleDialogComponent, {
+          data: new DialogModel('Error', error.error)
+        });
+        console.log(error);
+      });
+    }
+  }
 
+  public updateWordList(): void {
+    this.boggleService.getWords(this.playBoard.stateId).subscribe((result: Array<WordEntry>) => {
+      console.log(result);
+      this.words = result;
+      this.resetBoardDisplayStates();
+      this.updatePlayBoard();
+    }, (error: HttpErrorResponse) => {
+      console.log(error);
+      this.dialog.open(SimpleDialogComponent, {
+        data: new DialogModel('Error', error.error)
+      });
+    });
   }
 
   public timerExpired(): void {
-    console.log('timerExpired');
+    this.boggleService.getScore(this.playBoard.stateId).subscribe((result: number) => {
+      const dialogRef = this.dialog.open(EndGameDialogComponent, {
+        data: new EndgameDialogModel(result, this.newGame)
+      });
+
+      dialogRef.afterClosed().subscribe((result2: any) => {
+        if (result2 === 'newGame') {
+          this.newGame(null);
+        }
+      });
+    });
   }
 
   public newGame(menuDrawer: MatDrawer): void {
@@ -75,6 +124,16 @@ export class BoggleComponent implements OnInit {
     newBoard.letters = board.board;
 
     this.board = newBoard;
+  }
+
+  public updatePlayBoard(): void {
+    this.boggleService.getBoardById(this.playBoard.stateId).subscribe((board: Board) => {
+      this.playBoard = board;
+    }, (error: HttpErrorResponse) => {
+      this.dialog.open(SimpleDialogComponent, {
+        data: new DialogModel('Error', error.error)
+      });
+    });
   }
 
   public handleItemClick(id: number): void {
@@ -144,6 +203,16 @@ export class BoggleComponent implements OnInit {
         this.board.display[i] = displayState.None;
       }
     }
+  }
+
+  private resetBoardDisplayStates(): void {
+    const newBoard = {...this.board};
+    this.selectedOrder = [];
+    this.lastItemId = -1;
+    newBoard.display = this.board.display.map(() => {
+      return displayState.None;
+    });
+    this.board = newBoard;
   }
 
   private markValidSquares(board: BoardState, validIds: Array<number>): void {

@@ -3,7 +3,7 @@ import validator from 'validator'
 import sprintf from 'sprintf'
 import '../styles/style.scss'
 
-let apiAddress = 'http://localhost:52964'
+let apiAddress = 'http://localhost:50445'
 let timeLimitMs = 60000
 let timerInterval
 

@@ -13,13 +13,16 @@ import { AppComponent } from './app.component';
 import { BoggleComponent } from './boggle/boggle.component';
 import { BoggleItemComponent } from './boggle/boggleItem/boggleItem.component';
 import { TimerComponent } from './timer/timer.component';
+import { SimpleDialogComponent, EndGameDialogComponent } from './dialog';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoggleComponent,
     BoggleItemComponent,
-    TimerComponent
+    TimerComponent,
+    SimpleDialogComponent,
+    EndGameDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -29,6 +32,10 @@ import { TimerComponent } from './timer/timer.component';
     RouterModule.forRoot(
       [{path: '', component: AppComponent}]
     )
+  ],
+  entryComponents: [
+    SimpleDialogComponent,
+    EndGameDialogComponent
   ],
   providers: [
     Title
