@@ -12,8 +12,7 @@ import { Board } from '../models/Board';
 import { WordEntry } from '../models/WordEntry';
 import { DialogModel } from '../models/DialogModel';
 import { HttpErrorResponse } from '@angular/common/http';
-import { SimpleDialogComponent } from '../dialog/simpleDialog/simpleDialog.component';
-import { EndGameDialogComponent } from '../dialog';
+import { EndGameDialogComponent, SimpleDialogComponent, NewGameDialogComponent } from '../dialog';
 import { EndgameDialogModel } from '../models/EndgameDialogModel';
 
 @Component({
@@ -45,6 +44,13 @@ export class BoggleComponent implements OnInit {
     if (this.route.queryParams['id'] === undefined) {
       console.log('create new game');
       // this.newGame(null);
+      const dialog = this.dialog.open(NewGameDialogComponent);
+
+      dialog.afterClosed().subscribe((result: any) => {
+        if (result === 'yes') {
+          this.newGame(null);
+        }
+      });
     }
 
     this.route.queryParams.subscribe((params: Array<object>) => {

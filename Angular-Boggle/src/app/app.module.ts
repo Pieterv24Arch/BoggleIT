@@ -13,7 +13,7 @@ import { AppComponent } from './app.component';
 import { BoggleComponent } from './boggle/boggle.component';
 import { BoggleItemComponent } from './boggle/boggleItem/boggleItem.component';
 import { TimerComponent } from './timer/timer.component';
-import { SimpleDialogComponent, EndGameDialogComponent } from './dialog';
+import { SimpleDialogComponent, EndGameDialogComponent, NewGameDialogComponent } from './dialog';
 
 @NgModule({
   declarations: [
@@ -22,7 +22,8 @@ import { SimpleDialogComponent, EndGameDialogComponent } from './dialog';
     BoggleItemComponent,
     TimerComponent,
     SimpleDialogComponent,
-    EndGameDialogComponent
+    EndGameDialogComponent,
+    NewGameDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +36,8 @@ import { SimpleDialogComponent, EndGameDialogComponent } from './dialog';
   ],
   entryComponents: [
     SimpleDialogComponent,
-    EndGameDialogComponent
+    EndGameDialogComponent,
+    NewGameDialogComponent
   ],
   providers: [
     Title
