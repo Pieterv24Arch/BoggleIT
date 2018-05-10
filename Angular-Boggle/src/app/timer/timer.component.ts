@@ -1,4 +1,7 @@
 import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { TimeService } from '../services/time.service';
 
 import { StringHelper as str } from '../helpers/StringHelper';
 
@@ -9,15 +12,25 @@ import { StringHelper as str } from '../helpers/StringHelper';
 })
 export class TimerComponent implements OnChanges {
   @Input() private running: boolean = true;
-  @Input() private startTime: number = Date.now();
+  @Input() private startTime: number = new Date().getTime();
   @Input() private countDownFrom: number;
   @Output() private timerDone: EventEmitter<any> = new EventEmitter();
 
   private interval: any;
+  private offSet: number;
 
   public timeText: string = '00:00:00';
 
+  public constructor(private timeService: TimeService) {
+
+  }
+
   public ngOnChanges(changes: SimpleChanges): void {
+    this.timeService.getServerTime().subscribe((result: number) => {
+      this.offSet = new Date().getTime() - result;
+    }, (Error: HttpErrorResponse) => {
+      console.log(Error.error);
+    });
     if (changes.startTime) {
       this.running = true;
     }
@@ -43,7 +56,7 @@ export class TimerComponent implements OnChanges {
 
   private updateTimer(countDown: boolean): void {
     if (countDown) {
-      const timeLeft = this.countDownFrom - (Date.now() - this.startTime);
+      const timeLeft = this.countDownFrom - (new Date().getTime() - (this.startTime + this.offSet));
       if (timeLeft > 0) {
         this.timeText = this.calculateTimerString(timeLeft);
       } else {
@@ -53,7 +66,7 @@ export class TimerComponent implements OnChanges {
         this.interval = undefined;
       }
     } else {
-      const timeElapsed = Date.now() - this.startTime;
+      const timeElapsed = new Date().getTime() - (this.startTime + this.offSet);
       this.timeText = this.calculateTimerString(timeElapsed);
     }
   }

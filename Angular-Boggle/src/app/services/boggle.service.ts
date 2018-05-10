@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Board } from '../models/Board';
 import { WordEntry } from '../models/WordEntry';
 
-const apiUrl = 'http://141.252.221.79:55037';
+const apiUrl = 'http://192.168.178.18:55037';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json'
