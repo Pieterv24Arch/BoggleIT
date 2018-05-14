@@ -41,18 +41,17 @@ export class BoggleComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    if (this.route.queryParams['id'] === undefined) {
-      console.log('create new game');
-      // this.newGame(null);
-      const dialog = this.dialog.open(NewGameDialogComponent);
+    // if (this.route.queryParams['id'] === undefined) {
+    //   console.log('create new game');
+    //   // this.newGame(null);
+    //   const dialog = this.dialog.open(NewGameDialogComponent);
 
-      dialog.afterClosed().subscribe((result: any) => {
-        if (result === 'yes') {
-          this.newGame(null);
-        }
-      });
-    }
-
+    //   dialog.afterClosed().subscribe((result: any) => {
+    //     if (result === 'yes') {
+    //       this.newGame(null);
+    //     }
+    //   });
+    // }
     this.route.queryParams.subscribe((params: Array<object>) => {
       console.log(params['id']);
       if (params['id']) {
@@ -99,9 +98,11 @@ export class BoggleComponent implements OnInit {
   }
 
   public timerExpired(): void {
+    console.log('timer expired');
     this.boggleService.getScore(this.playBoard.stateId).subscribe((result: number) => {
       const dialogRef = this.dialog.open(EndGameDialogComponent, {
-        data: new EndgameDialogModel(result, this.newGame)
+        data: new EndgameDialogModel(this.playBoard.stateId, result, this.newGame),
+        disableClose: true
       });
 
       dialogRef.afterClosed().subscribe((result2: any) => {

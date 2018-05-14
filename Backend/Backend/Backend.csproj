@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20180514071244_Added highscores.cs" />
+    <Compile Remove="Migrations\20180514071244_Added highscores.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Data\lower.lst" />
   </ItemGroup>
 

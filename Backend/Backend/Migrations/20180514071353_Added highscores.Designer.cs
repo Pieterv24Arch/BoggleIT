@@ -11,9 +11,10 @@ using System;
 namespace Backend.Migrations
 {
     [DbContext(typeof(BoggleDbContext))]
-    partial class BoggleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180514071353_Added highscores")]
+    partial class Addedhighscores
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

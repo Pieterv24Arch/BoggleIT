@@ -19,9 +19,12 @@
       </button>
     </mat-toolbar>
     <mat-nav-list>
-      <mat-list-item>
-        <span class="listItem" (click)='newGame(menuDrawer)'>New Game</span>
+      <mat-list-item (click)='newGame(menuDrawer)'>
+        <span class="listItem">New Game</span>
       </mat-list-item>
+      <a routerLink="highscore">
+        <mat-list-item>High Score</mat-list-item>
+      </a>
     </mat-nav-list>
   </mat-drawer>
   <mat-drawer-content>

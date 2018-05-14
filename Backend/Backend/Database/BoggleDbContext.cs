@@ -11,6 +11,7 @@ namespace Backend.Database
     {
         public DbSet<BoardState> BoardStates { get; set; }
         public DbSet<WordEntry> Words { get; set; }
+        public DbSet<Highscore> Highscores { get; set; }
 
         public BoggleDbContext(DbContextOptions<BoggleDbContext> options) : base(options)
         {

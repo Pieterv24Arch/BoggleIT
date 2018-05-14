@@ -1,6 +1,16 @@
 <h1>Time's up</h1>
 <p>Your score was {{data.score}}</p>
 <div class="dialogOptionsContainer">
-  <button mat-button [mat-dialog-close]='"newGame"'>New Game</button>
-  <button mat-button (click)='closeDialog()'>Close</button>
+  <div *ngIf="data.score > 0">
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Name" [(ngModel)]="Name">
+    </mat-form-field>
+    <span class="spacer"></span>
+    <button mat-button (click)="sendHighScrore()" [disabled]="Added">Add HighScore!!!</button>
+  </div>
+  <div>
+    <button mat-button [mat-dialog-close]='"newGame"'>New Game</button>
+    <span class="spacer"></span>
+    <button mat-button (click)='closeDialog()'>Close</button>
+  </div>
 </div>

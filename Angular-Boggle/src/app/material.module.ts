@@ -9,7 +9,8 @@ import {
   MatSidenavModule,
   MatIconModule,
   MatListModule,
-  MatDialogModule
+  MatDialogModule,
+  MatInputModule
 } from '@angular/material';
 
 // Components
@@ -22,7 +23,8 @@ import {
     MatSidenavModule,
     MatIconModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    MatInputModule
   ],
   exports: [
     MatButtonModule,
@@ -31,7 +33,8 @@ import {
     MatSidenavModule,
     MatIconModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    MatInputModule
   ]
 })
 export class  AngularMaterialModule { }
